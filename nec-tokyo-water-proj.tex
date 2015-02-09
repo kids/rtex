@@ -1,0 +1,488 @@
+\documentclass[onecolumn,twoside,11pt]{article}
+
+\usepackage{CJK}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             P A G E   S I Z E
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\topfraction}{0.95}   % let figure take up nearly whole page
+\renewcommand{\textfraction}{0.05}  % let figure take up nearly whole page
+
+% Specify the dimensions of each page
+
+\oddsidemargin .25in    %   Note \oddsidemargin = \evensidemargin
+\evensidemargin .25in
+\marginparwidth 0.07 true in
+%\marginparwidth 0.75 true in
+%\topmargin 0 true pt           % Nominal distance from top of page to top of
+%\topmargin 0.125in
+\topmargin -0.5in
+\addtolength{\headsep}{0.25in}
+\textheight 8.5 true in       % Height of text (including footnotes & figures)
+\textwidth 6.0 true in        % Width of text line.
+\widowpenalty=10000
+\clubpenalty=10000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               S E C T I O N S
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+\def\@startsiction#1#2#3#4#5#6{\if@noskipsec \leavevmode \fi
+   \par \@tempskipa #4\relax
+   \@afterindenttrue
+   \ifdim \@tempskipa <\z@ \@tempskipa -\@tempskipa \@afterindentfalse\fi
+   \if@nobreak \everypar{}\else
+     \addpenalty{\@secpenalty}\addvspace{\@tempskipa}\fi \@ifstar
+     {\@ssect{#3}{#4}{#5}{#6}}{\@dblarg{\@sict{#1}{#2}{#3}{#4}{#5}{#6}}}}
+
+\def\@sict#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname}\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec.\hskip 0.1em}
+                    {\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname\hskip 0.5em }\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\thesection {\arabic{section}}
+\def\thesubsection {\thesection.\arabic{subsection}}
+\renewcommand\section{\@startsiction{section}{1}{\z@}{-0.24in}{0.10in}
+             {\large\bf\raggedright}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-0.20in}{0.08in}
+                {\normalsize\bf\raggedright}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}{-0.18in}{0.08in}
+                {\normalsize\sc\raggedright}}
+\renewcommand\paragraph{\@startsiction{paragraph}{4}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+\renewcommand\subparagraph{\@startsiction{subparagraph}{5}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               A B S T R A C T
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewenvironment{abstract}
+{\centerline{\large\bf Abstract}\vspace{0.7ex}%
+  \bgroup\leftskip 20pt\rightskip 20pt\small\noindent}%
+{\par\egroup\vskip 0.25ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         KEYWORDS THEOREM ACK NOTES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{keywords}
+{\bgroup\leftskip 20pt\rightskip 20pt \small\noindent{\bf Keywords:} }%
+{\par\egroup\vskip 0.25ex}
+
+\newcommand{\BlackBox}{\rule{1.5ex}{1.5ex}}  % end of proof
+\newenvironment{proof}{\par\noindent{\bf Proof\ }}{\hfill\BlackBox\\[2mm]}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{axiom}[theorem]{Axiom}
+
+\long\def\acks#1{\vskip 0.3in\noindent{\large\bf Acknowledgments}\vskip 0.2in\noindent #1}
+\long\def\researchnote#1{\noindent {\LARGE\it Research Note} #1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        FIRST PAGE, TITLE, AUTHOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newlength\aftertitskip     \newlength\beforetitskip
+\newlength\interauthorskip  \newlength\aftermaketitskip
+
+%% Changeable parameters.
+\setlength\aftertitskip{0.1in plus 0.2in minus 0.2in}
+\setlength\beforetitskip{0.05in plus 0.08in minus 0.08in}
+\setlength\interauthorskip{0.08in plus 0.1in minus 0.1in}
+\setlength\aftermaketitskip{0.3in plus 0.1in minus 0.1in}
+
+%=================================================================
+%%CONTENTS
+%=================================================================
+
+% Definitions of handy macros
+\newcommand{\fracpartial}[2]{\frac{\partial #1}{\partial  #2}}
+
+\begin{document}
+\begin{CJK*}{GBK}{song}
+
+\title{Data Mining Project: Prediction of Tokyo Water Supply}
+\fancyhf{}
+\fancyhead[CE]{Roi ZHAO}
+\fancyfoot[RO,LE]{\thepage}
+\fancyfoot[LO]{NEC Labs China}
+\fancyheadoffset{4cm}
+
+%\maketitle
+{ \huge \bfseries \centering iconv: illegal input sequence at position 6574
+tex iconv -i gbk -t utf-8 sample.tex 
+iconv: invalid option -- 'i'
+Try `iconv --help' or `iconv --usage' for more information.
+tex iconv -f gbk -t utf-8 sample.tex 
+\documentclass[onecolumn,twoside,11pt]{article}
+
+\usepackage{CJK}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             P A G E   S I Z E
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\topfraction}{0.95}   % let figure take up nearly whole page
+\renewcommand{\textfraction}{0.05}  % let figure take up nearly whole page
+
+% Specify the dimensions of each page
+
+\oddsidemargin .25in    %   Note \oddsidemargin = \evensidemargin
+\evensidemargin .25in
+\marginparwidth 0.07 true in
+%\marginparwidth 0.75 true in
+%\topmargin 0 true pt           % Nominal distance from top of page to top of
+%\topmargin 0.125in
+\topmargin -0.5in
+\addtolength{\headsep}{0.25in}
+\textheight 8.5 true in       % Height of text (including footnotes & figures)
+\textwidth 6.0 true in        % Width of text line.
+\widowpenalty=10000
+\clubpenalty=10000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               S E C T I O N S
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+\def\@startsiction#1#2#3#4#5#6{\if@noskipsec \leavevmode \fi
+   \par \@tempskipa #4\relax
+   \@afterindenttrue
+   \ifdim \@tempskipa <\z@ \@tempskipa -\@tempskipa \@afterindentfalse\fi
+   \if@nobreak \everypar{}\else
+     \addpenalty{\@secpenalty}\addvspace{\@tempskipa}\fi \@ifstar
+     {\@ssect{#3}{#4}{#5}{#6}}{\@dblarg{\@sict{#1}{#2}{#3}{#4}{#5}{#6}}}}
+
+\def\@sict#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname}\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec.\hskip 0.1em}
+                    {\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname\hskip 0.5em }\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\thesection {\arabic{section}}
+\def\thesubsection {\thesection.\arabic{subsection}}
+\renewcommand\section{\@startsiction{section}{1}{\z@}{-0.24in}{0.10in}
+             {\large\bf\raggedright}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-0.20in}{0.08in}
+                {\normalsize\bf\raggedright}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}{-0.18in}{0.08in}
+                {\normalsize\sc\raggedright}}
+\renewcommand\paragraph{\@startsiction{paragraph}{4}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+\renewcommand\subparagraph{\@startsiction{subparagraph}{5}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               A B S T R A C T
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewenvironment{abstract}
+{\centerline{\large\bf Abstract}\vspace{0.7ex}%
+  \bgroup\leftskip 20pt\rightskip 20pt\small\noindent}%
+{\par\egroup\vskip 0.25ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         KEYWORDS THEOREM ACK NOTES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{keywords}
+{\bgroup\leftskip 20pt\rightskip 20pt \small\noindent{\bf Keywords:} }%
+{\par\egroup\vskip 0.25ex}
+
+\newcommand{\BlackBox}{\rule{1.5ex}{1.5ex}}  % end of proof
+\newenvironment{proof}{\par\noindent{\bf Proof\ }}{\hfill\BlackBox\\[2mm]}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{axiom}[theorem]{Axiom}
+
+\long\def\acks#1{\vskip 0.3in\noindent{\large\bf Acknowledgments}\vskip 0.2in\noindent #1}
+\long\def\researchnote#1{\noindent {\LARGE\it Research Note} #1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        FIRST PAGE, TITLE, AUTHOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newlength\aftertitskip     \newlength\beforetitskip
+\newlength\interauthorskip  \newlength\aftermaketitskip
+
+%% Changeable parameters.
+\setlength\aftertitskip{0.1in plus 0.2in minus 0.2in}
+\setlength\beforetitskip{0.05in plus 0.08in minus 0.08in}
+\setlength\interauthorskip{0.08in plus 0.1in minus 0.1in}
+\setlength\aftermaketitskip{0.3in plus 0.1in minus 0.1in}
+
+%=================================================================
+%%CONTENTS
+%=================================================================
+
+% Definitions of handy macros
+\newcommand{\fracpartial}[2]{\frac{\partial #1}{\partial  #2}}
+
+\begin{document}
+\begin{CJK*}{GBK}{song}
+
+\title{Data Mining Project: Prediction of Tokyo Water Supply}
+\fancyhf{}
+\fancyhead[CE]{Roi ZHAO}
+\fancyfoot[RO,LE]{\thepage}
+\fancyfoot[LO]{NEC Labs China}
+\fancyheadoffset{4cm}
+
+%\maketitle
+{ \huge \bfseries \centering 东京都水道局供水预测项目技术报告}\\[0.4cm]
+{\color{blue}赵仁豫}，zhao\_renyu{@}nec{.}cn \emph{2013/10/15}\\
+\hrule
+\vspace{0.2cm}
+\thispagestyle{plain}
+
+\begin{abstract}%   <- trailing '%' for backward compatibility of .sty file
+
+This paper describes the mixtures-of-trees model, a probabilistic
+model for discrete multidimensional domains.  Mixtures-of-trees
+generalize the probabilistic trees of
+in a different and complementary direction to that of Bayesian networks.
+We present efficient algorithms for learning mixtures-of-trees
+models in maximum likelihood and Bayesian frameworks.
+We also discuss additional efficiencies that can be
+obtained when data are ``sparse,'' and we present data
+structures and algorithms that exploit such sparseness.
+Experimental results demonstrate the performance of the
+model for both density estimation and classification.
+We also discuss the sense in which tree-based classifiers
+perform an implicit form of feature selection, and demonstrate
+a resulting insensitivity to irrelevant attributes.
+
+\end{abstract}
+
+\begin{keywords}
+  Bayesian Networks, Mixture Models,
+\end{keywords}
+
+\section{项目跟踪}
+\CJKindent
+从9月20日开始，项目进入最后阶段，主要是对细节进行调整，统计数据报告。
+\subsection{9月20日}
+9月20日当日确定了后期分析的目标计划，共有三个方面，其中两个是对总供水量和各点供水量的预测精度进行可视化，另外一个是提高各点供水量预测精度。其中提高预测精度的方案依旧是变更学习数据区间，从两年所有数据缩减到东京震灾后的区间。实施过程中至10月8日一直在进行数据可视化工作（10月8日至今尚未看到新的日报，但邮件内容显示有在分析各点供水量的周期性）。\\
+9月24日到9月27日为上述计划实施的第一周，做成的可视化图形有：\\
+-误差率对比图（现行系统-异种混合）\\
+\centerline{\includegraphics[width=15cm]{S01.jpg}}\\
+-误差率散布图（异种混合相对线性系统的改善量）\\
+\centerline{\includegraphics[width=15cm]{S02.jpg}}\\
+-各点供水量与误差率散布图\\
+\centerline{\includegraphics[width=15cm]{S03.jpg}}\\
+-天气状况变化统计图（晴云雨雪Markov序列）\\
+\centerline{\includegraphics[width=15cm]{S04.jpg}}\\
+-天气状况变化与误差率散布图\\
+\centerline{\includegraphics[width=15cm]{S05.jpg}}\\
+
+10月1日到10月4日第二周，做成的可视化图形有：\\
+-各点误差率与供水量关系分布图\\
+\centerline{\includegraphics[width=15cm]{S06.jpg}}\\
+-气温差分与误差率散点图\\
+\centerline{\includegraphics[width=15cm]{S07.jpg}}\\
+-对比Tuning3d、3e的误差绝对值数据做成表格\\
+
+10月7日到10月8日主要对之前数据做了修正：\\
+-删除误差率比较图中数据不全的点\\
+-修改坐标轴描述，变量表示颜色等\\
+
+
+
+\section{总结}
+按照中央研究院提供的标准作业流程（Standard Business Process）,L1层（大纲）共有16个阶段：
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+  \item Sales \& Interviews
+  \item 1st proposal
+  \item Preparation for a trial
+  \item Trial analysis
+  \item Trial reports
+  \item Strategies of intellectual property and commercialization
+  \item Proposing the system
+  \item Definitive contract
+  \item Launching a project
+  \item Regular analysis
+  \item Requirement definition
+  \item Design
+  \item Production
+  \item Test
+  \item System installation
+  \item Operation
+\end{enumerate}
+从8月28日我们作为NECLC加入东京都水道局供水预测项目（水道局项目）到目前为止，
+该项目经历了试验准备（3, Preparation for a trial）,试验分析（4，Trial analysis）两个阶段，并将于下周五（2013/10/25）进入试验结果报告（5，Trial reports）阶段。\\
+本项目的主要目标是利用东京都水道局（东京地方公共自来水供水单位）的供水量历史数据，预测东京都东部23区、西部26市町村各点（66个/97个）及总供水需求量，并借助更加准确的预测，达到节省水利输送电力消耗，节约成本的目的。
+
+\subsection{项目管理}
+该项目是NEC中央研究院主导的项目，包括BU（Business Unit）和NES（Software）。以下介绍项目相关人员、周期及其他相关信息。
+
+\subsubsection{人员安排}
+参与本项目的成员包括来自NECCRL（中央研究院）的青木 健児, 千葉 雄樹（Cloud System 研究所）, 本橋 洋介，以及来自NECSoftware的瀬戸 美星（PF System）, 保坂 真奈美, 小泉 美帆（NAS，后期加入）和我们（中国研究院）。
+其中濑户和保坂负责系统运行，对数据运用策略得到分析结果，他们向青木报告。千叶在9月20 日前参与策略讨论指导，其后从邮件看未见参与项目活动。\\
+
+\subsubsection{项目日程}
+在我们参与的项目周期内，项目进展包括三个方面：预测变量调节（説明変数チューニング）；数据更新；以及结果可视化。其中数据更新有两次，一次是加和各小时数据获得日总量数据，另一次是从客户获得天气数据（及客户提供的预测天气数据）；结果可视化工作主要在项目后期大量展开；
+数据更新是项目进展中最重要的一个方面，实质性提升预测结果的有3个重要变化：说明变量加入前一周平均供水量、学习区间调整缩小范围、以及更新天气数据，具体情况将在下面“数据技术”部分讨论。\\
+这一周期可以分为两个阶段，第一阶段项目预测工作使用“现行系统”，第二阶段使用异构混合技术，大致以9月3日为间隔。按照项目进度，也可以按照工作重点从9月20日分为两个阶段，前一阶段对数据依照预先设置的目标计划的进行大量分析试验，参数检查，且依据每日试验结果追加新的目标设定，后一个阶段根据整个前一阶段的结果作出相对规模较小的改进，并进行结果可视化工作。
+
+\subsubsection{项目文档}
+前期准备文档包括前一阶段向客户提交的Proposal、分析任务目标设定、关键概念等。\\
+所有文档存放于局域网ftp，地址及命名规则大致形如\verb|\\10.56.41.236\pp\03_探索案件\02. 水道局|，该目录下分析有★取扱注意★現行システムとの比較検証、分析資料、result等文件夹。\\
+受权限限制，只能看到青木拷贝至服务器相关neclc文件夹内（SAMPO2服务器 \verb|/mnt/M100_SAMPO2_U_00/project/tokyo_waterworks/neclc/|）的文件，其中9月3 日前只有除前期准备文档外只有两份WeeklyReport的pptx文件，而从9月2日开始每个工作日有格式如\verb|daily_report\daily_report_20131017.xlsx|的日报，以表格形式标记工作进度、追加任务及说明变量调整。自9月9日起每个工作日有格式如\verb|予測精度比較_20131007.pptx| 的预测结果比较文档，用于展示每次调整后异构混合方法与之前所得数据的横向、纵向结果比较。
+
+\subsection{数据技术}
+本项目至9月3日前采用的是现行预测系统（現行予測システムと），之后采用NEC研究院的异构混合技术，以现行系统作为比较基准。另外在前一阶段向用户提交Proposal及9月3 日前的分析中包括每小时水量预测，此后不再涉及，均为各点及东京都供水日总量预测。项目中供水量数据仅有东京都日总水量，以及各目标预测点每小时供水量（加和与总量不等）。\\
+异构混合方法（FAB HLM）最初预测使用的说明变量（feature）包括年月日类别、星期类别、假日类型、1 天前、1 周前、2 周前供水量数据、天气，（在每日19：00）预测当日22：00开始的一天、或翌日22：00开始的一天总供水量（各点及总量）。预测区间为2012/4/13至2012/9/30，初始学习区间为2010/1/1至2012/4/12。以下说明每次调整：
+\begin{itemize}
+  \item 天气数据从每小时数值，调整为每6小时为单位的统计值（预处理）
+  \item Tuning1 说明变量加入2日前、3日前水量，去除年份（9/10）
+  \item Tuning2 对DataSet中日分类做不明变动，因结果差后被取消（9/11）
+  \item Tuning3a 加入从客户处获得的大河内天气数据（9/12）
+  \item Tuning3b 修正3a中变量名（汗。）
+  \item Tuning3c 加入预测日前7日总供水量平均作为说明变量 （9/13）
+  \item Tuning3d 算法学习数据区间从两年缩减到东京震灾后2011/3-2012/2 （9/14）
+  \item Tuning3e 加入从客户处获得的“预测”天气作为说明变量（9/19）
+\end{itemize}
+
+\subsubsection{算法理论}
+本项目属于单目标时间序列回归预测分析，中央研究院采用的FABHLM技术本质上是层次线性模型，使用改进的渐进贝叶斯方法计算出模型参数。这一模型的优点在于适用范围广，较其他混合模型而言结构更简单，适用于周期性较强的时间序列分析。其他可以采用的模型还有样条分析等。FAB算法的优点在于收敛速度快，较普通EM算法一致性好（理解为FL 散度更小），这里当然也可以采用变分贝叶斯算法。
+
+\subsubsection{项目背景}
+这一项目的目标客户，东京都水道局是日本的地方公营企业，负责东京都23区及除少数地区外的多摩26市町供水。供水水泵耗电量非常之大（2009年中国供水耗电总量为108.3亿千瓦时，按0.5 元每千瓦时算合人民币50多亿元），而提高供水需求预测精度可以降低无效或折返供水耗电，从而节约成本，因此本项目的目标是尽可能提高东京地方供水预测水平。
+
+\subsubsection{数据特征}
+有关数据各变量内容前文已经述及，
+下面对数据特征涉及到的一些概念简单解释：
+\begin{description}
+  \item[DataSet] 指数据库中的数据，即预测工作第一步在Postgre数据库中整合观测变量及日期属性等得到的数据集。
+  \item[投入值] 在现行系统中，某时刻根据当前状况修正的说明变量值，加入后重新计算预测函数，更新预测结果。
+  \item[予測先] 预测当时（区别于预测前1天）。
+  \item[门函数] HLM模型中每一层类比于决策树判断选择何种划分的函数。
+\end{description}
+
+\subsubsection{问题难点}
+本项目的难点在于需要得到的预测精度非常高，例如作为异构混合技术比较对象的“现行系统”的结果如下表：\\
+    \begin{center}
+    \begin{tabular}{lrr}
+        预测区间 & 预测値 & 修正预测值\\
+        \hline
+        2007/1/1～2012/9/30 & 2.10\% & 1.55\%\\
+        2010/1/1～2012/9/30 & 2.20\% & 1.48\%\\
+        2011/3/11～2012/9/30 & 2.12\% & 1.40\%\\
+    \end{tabular}\\
+    \end{center}
+误差率已经非常小，因而取得明显优势的改进显得非常困难。\\
+同时项目中对于我们作为合作观察者而言，存在文件不足和交流不畅的问题，举例如下：
+\begin{itemize}
+  \item 对于“现行系统”，我们一直不知道指的是水道局目前使用的系统，
+  还是NEC研究院采用先前的系统；也不知道它使用何种算法。邮件沟通并未解决此问题。（【Mail Ref】Re: questions about water demand @Tue 9/17/2013 3:50 PM by Mihoshi Seto）
+  \item 对于“投入值”（投入値）这个概念，主要因为对项目实际情境不了解（客户操作背景），多次讨论后才逐渐清楚。（【Mail Ref】 RE: about water demand prediction PJ @Fri 9/6/2013 1:59 PM by Kenji Aoki）
+\end{itemize}
+
+通过参与项目，我们也获得很多经验：\\\-首先是要对所使用的模型和算法有明确的认识，才能更好地选择说明变量（feature），以本项目为例，变量的线性组合虽然在普通线性模型中是无效变量（非基变量），但是在混合模型中，变量的线性组合可能成为比变量本身更好的说明变量；\\\-另外要根据项目周期合理分配时间，有计划的设计调试说明变量效果的顺序步骤，提前考虑到过程中可能追加的分析目标，留出合理的时间块；\\\- 对于要呈现给客户的案例来说，得出合适的预测结果远远不够，还需要大量的可视化工作，将结果以最直观整洁的形式展现出来；\\\- 最后是项目文档对概念定义需要完善，尤其对缩写和易混淆概念的解释，对新加入和参考学习的人理解项目非常重要。
+
+\subsection{其他}
+\subsubsection{邮件格式}
+主题标明所涉项目及所讨论问题提出的日期或版本号，可以很容易辨认分类。
+
+\noindent\framebox[1.5\height][r]{$\pi$}\framebox[2.5\height][r]{$\pi$}\framebox[4.5\height][r]{$\pi$}
+\vskip 0.2in
+
+\end{CJK*}
+\end{document}
