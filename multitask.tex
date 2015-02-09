@@ -1,0 +1,200 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[a4paper,margin=60pt]{geometry}
+\setlength{\parindent}{0pt} %no first line of paragraph auto-indent
+\pagenumbering{roman}
+
+\begin{document}
+\title{FAB\textbackslash HME\quad Multi-target}
+\author{NEC\ Labs\ China}
+\maketitle
+
+\section{Preliminaries}
+\subsection{Data matrix}
+\begin{description}
+\item[(1)] $X\in R^{m\times n} $
+\item[(2)] $Y\in R^{k\times n} $
+\item[(3)] $n$ indicates $n$ samples, for each there are $m$ features, and $k$ targets
+\end{description}
+
+\subsection{Latent variables}
+\begin{description}
+\item[(1)] $ \zeta_j^n \in \{ 0,1\} $ is latent variable related to the $j$ -th path
+\item[(2)] $ \phi = \{\Theta_{yy} ,\Theta_{xy}\}$ is inverse covariance matrix, 
+	where $\begin{pmatrix} 	\Theta_{xx} & \Theta_{xy} \\
+		\Theta_{xy}^T & \Theta_{yy}
+	\end{pmatrix} = \Sigma^{-1} = \begin{pmatrix}
+	\Sigma_{xx} & \Sigma_{xy} \\
+	\Sigma_{xy}^T & \Sigma_{yy}
+	\end{pmatrix}^{-1}$ , and \\ $ \begin{pmatrix}
+	\textbf{x}_i  \\
+	\textbf{y}_i 
+	\end{pmatrix} \sim N(\begin{pmatrix}
+	\textbf{0}_M  \\
+	\textbf{0}_K 
+	\end{pmatrix}, \Sigma) $
+	\end{description}
+
+\subsection{Distribution of latent variables}
+
+$$ p(\zeta^N|x^N,\beta;\gamma)=
+	\prod_{n=1}^{N}
+	\prod_{j=1}^E
+	\prod_{i \in \epsilon_j}
+		{\psi_g(x^{(n)},i,j)^{\zeta_j^{(n)}}} $$ 
+		
+\begin{description}
+\setlength{\itemindent}{20em}
+\item $ \psi_g(x,i,j):=\psi(g(x,\alpha_i),i,j) $ \\
+\item $ \psi(a,i,j):= \begin{cases}
+		a & \mbox{if the j is in the left sub-tree of i} \\
+		1-a & \mbox{otherwise}
+	\end{cases} $
+\end{description}
+
+\subsection{Joint distribution}
+
+\begin{align*}
+p(y,\zeta|x,\theta) & = p(y|x,\zeta,\phi)p(\zeta|x,\beta;\gamma) \\
+	& = \sum_{j=1}^{E} p(y|x,\phi_j)^{\zeta_j}
+		\prod_{n=1}^{N}
+		\prod_{j=1}^E
+		\prod_{i \in \epsilon_j}
+		{\psi_g(x,i,j)^{\zeta_j}}
+\end{align*} 
+
+$$ p(y|x,\theta;\gamma)=\sum_{j=1}^E\prod_{i \in \epsilon_j}
+	\psi_g(x,i,j)p(y|x,\phi_j)$$ \\
+\hspace*{25em} HME Model, $ \theta = (\beta_1,...,\beta_G,\phi_1,...,\phi_E) $
+%In $c$-th component:\\
+$$ p(y_i|x_i,\phi_j)=\frac
+	{\exp{(-1/2y_i^T\Theta_{yy}y_i - x_i^T\Theta_{xy}y_i)}}
+	{\sqrt{(2\pi)^K/\det\Theta_{yy}}
+		\exp{(1/2x_i^T\Theta_{xy}\Theta_{yy}^{-1}\Theta_{xy}^Tx_i)}}$$ \\
+\hspace*{25em} conditional Gaussian graphical model (CGGM) \\
+\hspace*{25em} i.e. $y_i|x_i \sim N(-\Theta_{yy}^{-1}\Theta_{xy}^Tx_i,\Theta_{yy}^{-1}) $ \\
+
+$$ p(y_i|x_i,\zeta,\phi) = \sum_{j=1}^{E} p(y_i|x_i,\phi_j)^{\zeta_j^i}  $$ \\
+
+\section{FIC for FAB \textbackslash HME Multi-target}
+$$ log\-likelihood=\log{p(y^N|x^N,M)} \\
+	\geq\sum_{z^N}q(z^N)log(\frac{p(y^N,z^N|x^N,M)}{q(z^N)}) $$ \\
+
+%\begin{align*}
+$$ \log{p(y,\zeta|x,M)} = \log{\int{p(\zeta^N|\beta)\prod_{j=1}^{E}
+		p(y^N|x^N,\phi_j)^{\zeta_j^N} p(\theta|M)d\theta}} $$ 
+
+\begin{description}
+\setlength{\itemindent}{20em}
+\item $ \bar{\mathcal{F}}_\zeta = -\frac{1}{\sum_{n=1}^{N}
+	\sum_{j \in \mathcal{G}_i}\zeta_j^{(n)}} 
+	\nabla^2 p(\zeta_i^N|\beta_i) \left . \right|_{\beta_i=\bar{\beta_i}} $ \\
+\item $ \bar{\mathcal{F}}_G = -\frac{1}{\sum_{n=1}^{N}\zeta_j^{(n)}}
+	\nabla^2 p(y|\zeta_i^N,x,\phi_j) \left . \right|_{\phi_j=\bar{\phi_j}} $
+\end{description}
+
+$$ FIC = \max_q\sum_{\zeta^N}q(\zeta^N)\{
+	\log p(y^N,\zeta^N|x^N,\bar{\theta})-
+	\sum_{i=1}^{G}\frac{\mathcal{D}_\beta}{2}
+	\log\sum_{n=1}^{N}
+	\sum_{j \in \mathcal{G}_i}\zeta_j^{(n)}
+	-\sum_{j=1}^{E}\frac{\mathcal{D}_{\phi_j}}{2}
+	\log(\sum_{n=1}^{N}\zeta_j^{(n)})
+	-\log q(\zeta^N) \} $$
+%\end{align*} 
+
+%\begin{description}
+%\item $\log p(y,\zeta|x,\theta) $ 
+%\item $\mathcal{D}_{\phi_j} $
+%\end{description}
+
+\section{FAB for FAB \textbackslash HME Multi-target}
+\subsection{FIC lower bound}
+
+\begin{multline*}
+FIC_{LB} = \Gamma(q,\tilde{q},\theta,y,x) = \max_q \sum_{\zeta^N} q(\zeta^N) \{
+	\log p(y^N,\zeta^N|x^N,\theta) \\
+	-\sum_{i=1}^{G} ( \frac{\mathcal{D}_\beta}{2}
+		\mathcal{L}(\sum_{n=1}^{N}\sum_{j \in \mathcal{G}_i}\zeta_j^n , 
+		\sum_{n=1}^{N}\sum_{j \in \mathcal{G}_i}\tilde{q}(\zeta_j^n)) ) 
+	-\sum_{j=1}^{E}\frac{\mathcal{D}_{\phi_j}}{2}
+	\mathcal{L}(\sum_{n=1}^{N}\zeta_j^n , \sum_{n=1}^{N}\tilde{q}(\zeta_j^n)) 
+	-\log q(\zeta^N) \} 
+\end{multline*}
+
+\subsection{E step}
+$$ q^{(t)} = \arg\max_q(\Gamma(q,\tilde{q},\theta,y,x)) $$
+$$ \nabla_{q(\zeta_j)} FIC_{LB}= 0 $$
+$$ q^{(t)}(\zeta_j^{(n)}) \propto \prod_{i \in \epsilon_j} 
+	\psi_g^{(t-1)} (x^{(n)},i,j) p(y^{(n)}|x^{(n)},\phi_j^{(t-1)}) 
+		\exp \{ \sum_{i \in \epsilon_j} 
+			\frac{-D_{\beta_i}}{2N_{\beta_i}^{(t-1)}} 
+				\frac{-D_{\phi_j}}{2N_{\phi_i}^{(t-1)}} \} $$ \\
+				
+$ q(\zeta_j) $ updating: \\
+initialization: sampling $q$ randomly, get $\phi_j$ \\
+%for t=1,...,G \\
+%\qquad $ q(\zeta_t) = \prod_{i \in \epsilon_j} 
+%	\psi_g^{(t-1)} (x^{(n)},i,j) p(y^{(n)}|x^{(n)},\phi_j^{(t-1)}) 
+%	\exp \{ \sum_{i \in \epsilon_j} 
+%	\frac{-D_{\beta_i}}{2N_{\beta_i}^{(t-1)}} 
+%	\frac{-D_{\phi_j}}{2N_{\phi_i}^{(t-1)}} \} $ \\
+normalization in each round: $ q(\zeta_j) = q(\zeta_j)/\sum_{t=1}^{E} q(\zeta_t) $ \\
+
+\subsection{M step}
+For gating nodes: \\
+$$ \gamma_i^{(t)},\beta_i^{(t)} = \arg\max_{\gamma_i,\beta_i} 
+	\{ \sum_{n=1}^{N}
+	\sum_{j \in \mathcal{G}_i}q^{(t)}(\zeta_j^{(n)})
+	\log\psi_g^{(t)} (x^{(n)},i,j)
+	-\frac{D_{\beta_i}}{2}\log(N_{\beta_i}^{(t)})
+	 \} $$ 
+	 
+For experts: \\
+$$ S_j^{(t)}, \phi_j^{(t)} = \arg\max_{S_j,\phi_j}
+	\{   \sum_{n=1}^{N}q^{(t)}(\zeta_j^{(n)})
+	\log p(y^{(n)} | x^{(n)},\phi_j)
+	-\frac{D_{\phi_j}}{2}\log(N_{\phi_j}^{(t)})
+	\} $$	 
+
+Feature selection in expert nodes: \\
+\begin{description}
+\setlength{\itemindent}{5em}
+\item $ w_j^{(t)} = \arg\min_{w_j} Q(w_j,(\sigma_j^2)^{(t-1)}) 
+	\qquad s.t. \left \| w_j\right \|_0 \le K $ \\
+\item $ \sigma_j^{2(t)} = \arg\min_{\sigma_j} Q(w_j^{(t)}, \sigma_j^2) $ \\
+\item $ Q(w_j, \sigma_j^2) = -\sum_{n=1}^{N} q^{(t)} (\zeta_j^{(n)}) 
+	\log p(y^{(n)} | x^{(n)}, w_j, \sigma_j^2 ) $ \\
+\item $ w_j = -\theta^{-1}_{yy_j}\theta^T_{xy_j} $ \\
+\item $ \sigma^2_j = \theta^{-1}_{yy_j} $ \\
+\end{description}
+
+Forward: \\
+select a feature from unselected feature set by maximize: 
+$ \lvert \nabla_w Q(w^{(k)}, \sigma^2)_j \rvert $ \\
+
+\begin{align*}
+\nabla_w Q(w^{(k)}, \sigma^2)_i & = \frac{\partial Q_j}{
+	\partial (-\Theta^{-1}_{yy_j}\Theta^T_{xy_j}) } \\
+	& = \frac{d Q_j}{
+		-\Theta^{-1}_{yy_j}d(\Theta^T_{xy_j}) + d(-\Theta^{-1}_{yy_j}) \Theta^T_{xy_j} } \\
+	& = \frac{1}{ \frac{-\Theta^{-1}_{yy_j}}{ \frac{\partial Q}{\partial(\Theta^T_{xy_j}) }}
+		+\frac{\Theta^T_{xy_j}}{ \frac{\partial Q}{\partial(-\Theta^{-1}_{yy_j})}} } \\
+	& = \left({ - ({\frac{\partial Q} {\Theta_{yy_j}} {\partial\Theta_{xy_j}}^T})^{-1}
+		+ {\Theta^T_{yy_j}} {\frac{\partial Q}{\partial(\Theta_{yy_j})}
+			\Theta_{yy_j}\Theta_{xy_j}^T} }\right)^{-1} \\
+\end{align*} 
+
+$ \displaystyle \frac{\partial Q (X,Y,\Theta_{xy},\Theta_{yy})}{\partial \Theta_{xy}} =
+	-X^T Y + \sum_i E[x_i y_i^T] $ \\
+$ \displaystyle \frac{\partial Q (X,Y,\Theta_{xy},\Theta_{yy})}{\partial \Theta_{yy}} =
+-1/2Y^T Y + \sum_i E[y_i y_i^T] $ \\
+
+until: \\
+$ \Delta Q(w^{(k)},\sigma^2) \le 0.5\log N_{\phi_j}^{(t)} $ \\
+
+Backward: \\
+while $ \exists i, \Delta Q(w^{(k)}, \sigma^2)_i \le 0.5\log N_{\phi_j}^{(t)} $ \\
+remove the feature.
+
+\end{document} 
