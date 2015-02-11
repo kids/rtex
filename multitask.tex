@@ -29,10 +29,10 @@
 	\end{pmatrix}^{-1}$ , and \\ $ \begin{pmatrix}
 	\textbf{x}_i  \\
 	\textbf{y}_i 
-	\end{pmatrix} \sim N(\begin{pmatrix}
+	\end{pmatrix} \sim N\left(\begin{pmatrix}
 	\textbf{0}_M  \\
 	\textbf{0}_K 
-	\end{pmatrix}, \Sigma) $
+	\end{pmatrix}, \Sigma\right) $
 	\end{description}
 
 \subsection{Distribution of latent variables}
@@ -55,47 +55,54 @@ $$ p(\zeta^N|x^N,\beta;\gamma)=
 \subsection{Joint distribution}
 
 \begin{align*}
-p(y,\zeta|x,\theta) & = p(y|x,\zeta,\phi)p(\zeta|x,\beta;\gamma) \\
-	& = \sum_{j=1}^{E} p(y|x,\phi_j)^{\zeta_j}
+p(y^N,\zeta^N|x^N,\theta) & = p(y^N|x^N,\zeta^N,\phi)p(\zeta^N|x^N,\beta) \\
+	& = \prod_{n=1}^N \prod_{j=1}^{E} p(y_n|x_n,\phi_j)^{\zeta_j^n}
 		\prod_{n=1}^{N}
 		\prod_{j=1}^E
 		\prod_{i \in \epsilon_j}
-		{\psi_g(x,i,j)^{\zeta_j}}
+		{\psi_g(x_n,i,j)^{\zeta_j}}
 \end{align*} 
 
-$$ p(y|x,\theta;\gamma)=\sum_{j=1}^E\prod_{i \in \epsilon_j}
-	\psi_g(x,i,j)p(y|x,\phi_j)$$ \\
+%$$ p(y_n|x_n,\theta;\gamma)=\sum_{j=1}^E\prod_{i \in \epsilon_j}
+%	\psi_g(x,i,j)p(y|x,\phi_j)$$ \\
 \hspace*{25em} HME Model, $ \theta = (\beta_1,...,\beta_G,\phi_1,...,\phi_E) $
 %In $c$-th component:\\
-$$ p(y_i|x_i,\phi_j)=\frac
-	{\exp{(-1/2y_i^T\Theta_{yy}y_i - x_i^T\Theta_{xy}y_i)}}
+$$ p(y_n|x_n,\phi_j)=\frac
+	{\exp{(-1/2y_n^T\Theta_{yy}y_n - x_n^T\Theta_{xy}y_n)}}
 	{\sqrt{(2\pi)^K/\det\Theta_{yy}}
-		\exp{(1/2x_i^T\Theta_{xy}\Theta_{yy}^{-1}\Theta_{xy}^Tx_i)}}$$ \\
+		\exp{(1/2x_n^T\Theta_{xy}\Theta_{yy}^{-1}\Theta_{xy}^Tx_n)}}$$ \\
 \hspace*{25em} conditional Gaussian graphical model (CGGM) \\
 \hspace*{25em} i.e. $y_i|x_i \sim N(-\Theta_{yy}^{-1}\Theta_{xy}^Tx_i,\Theta_{yy}^{-1}) $ \\
 
-$$ p(y_i|x_i,\zeta,\phi) = \sum_{j=1}^{E} p(y_i|x_i,\phi_j)^{\zeta_j^i}  $$ \\
+%$$ p(y_i|x_i,\zeta,\phi) = \sum_{j=1}^{E} p(y_i|x_i,\phi_j)^{\zeta_j^i}  $$ \\
 
 \section{FIC for FAB \textbackslash HME Multi-target}
 $$ log\-likelihood=\log{p(y^N|x^N,M)} \\
-	\geq\sum_{z^N}q(z^N)log(\frac{p(y^N,z^N|x^N,M)}{q(z^N)}) $$ \\
+	\geq\sum_{\zeta^N}q(\zeta^N)log(\frac{p(y^N,\zeta^N|x^N,M)}{q(\zeta^N)}) $$ \\
 
-%\begin{align*}
-$$ \log{p(y,\zeta|x,M)} = \log{\int{p(\zeta^N|\beta)\prod_{j=1}^{E}
-		p(y^N|x^N,\phi_j)^{\zeta_j^N} p(\theta|M)d\theta}} $$ 
+\begin{align*}
+\log{p(y^N,\zeta^N|x^N,M)} & = \log \int{ 
+	\prod_{j=1}^Z \prod_{i \in \epsilon_j} p(\zeta^N_j|x^N,\beta_i)
+	\prod_{j=1}^{E} p(y^N|x^N,\zeta_j^N,\phi_j) p(\theta|M)d\theta} \\
+	& = \log \int{ 
+	\prod_{i=1}^G p(\eta^N_i|x^N,\beta_i)
+	\prod_{j=1}^{E} p(y^N|x^N,\zeta_j^N,\phi_j) p(\theta|M)d\theta}
+\end{align*}
+\hspace*{25em} $p(\eta^N_i|x^N,\beta_i) =
+	\prod_{j \in G_i} p(\zeta_j^N|x^N,\beta_i) $ \\
 
 \begin{description}
 \setlength{\itemindent}{20em}
-\item $ \bar{\mathcal{F}}_\zeta = -\frac{1}{\sum_{n=1}^{N}
+\item $ \bar{\mathcal{F}}_{G_i} = -\frac{1}{\sum_{n=1}^{N}
 	\sum_{j \in \mathcal{G}_i}\zeta_j^{(n)}} 
-	\nabla^2 p(\zeta_i^N|\beta_i) \left . \right|_{\beta_i=\bar{\beta_i}} $ \\
-\item $ \bar{\mathcal{F}}_G = -\frac{1}{\sum_{n=1}^{N}\zeta_j^{(n)}}
-	\nabla^2 p(y|\zeta_i^N,x,\phi_j) \left . \right|_{\phi_j=\bar{\phi_j}} $
+	\nabla^2 p(\eta_i^N|x^N,\beta_i) \left . \right|_{\beta_i=\bar{\beta_i}} $ \\
+\item $ \bar{\mathcal{F}}_{E_j} = -\frac{1}{\sum_{n=1}^{N}\zeta_j^{(n)}}
+	\nabla^2 p(y^N|\zeta_i^N,x^N,\phi_j) \left . \right|_{\phi_j=\bar{\phi_j}} $
 \end{description}
 
 $$ FIC = \max_q\sum_{\zeta^N}q(\zeta^N)\{
 	\log p(y^N,\zeta^N|x^N,\bar{\theta})-
-	\sum_{i=1}^{G}\frac{\mathcal{D}_\beta}{2}
+	\sum_{i=1}^{G}\frac{\mathcal{D}_{\beta_i}}{2}
 	\log\sum_{n=1}^{N}
 	\sum_{j \in \mathcal{G}_i}\zeta_j^{(n)}
 	-\sum_{j=1}^{E}\frac{\mathcal{D}_{\phi_j}}{2}
@@ -128,18 +135,27 @@ $$ \nabla_{q(\zeta_j)} FIC_{LB}= 0 $$
 $$ q^{(t)}(\zeta_j^{(n)}) \propto \prod_{i \in \epsilon_j} 
 	\psi_g^{(t-1)} (x^{(n)},i,j) p(y^{(n)}|x^{(n)},\phi_j^{(t-1)}) 
 		\exp \{ \sum_{i \in \epsilon_j} 
-			\frac{-D_{\beta_i}}{2N_{\beta_i}^{(t-1)}} 
+			\frac{-D_{\beta_i}}{2N_{\beta_i}^{(t-1)}} +
 				\frac{-D_{\phi_j}}{2N_{\phi_i}^{(t-1)}} \} $$ \\
+\begin{description}
+\setlength{\itemindent}{20em}
+\item $ N_{\beta_i}^{(t-1)} = \sum_{n=1}^{N}\sum_{j \in \mathcal{G}_i} 
+	q^{(t)} (\zeta_j^{(n)} $ \\
+\item $ N_{\phi_i}^{(t-1)} = \sum_{n=1}^{N}	q^{(t)} (\zeta_j^{(n)}) $
+\end{description}
 				
 $ q(\zeta_j) $ updating: \\
-initialization: sampling $q$ randomly, get $\phi_j$ \\
+\begin{enumerate}
+\item initialization: sampling $q$ randomly, get $\phi_j$ 
 %for t=1,...,G \\
 %\qquad $ q(\zeta_t) = \prod_{i \in \epsilon_j} 
 %	\psi_g^{(t-1)} (x^{(n)},i,j) p(y^{(n)}|x^{(n)},\phi_j^{(t-1)}) 
 %	\exp \{ \sum_{i \in \epsilon_j} 
 %	\frac{-D_{\beta_i}}{2N_{\beta_i}^{(t-1)}} 
 %	\frac{-D_{\phi_j}}{2N_{\phi_i}^{(t-1)}} \} $ \\
-normalization in each round: $ q(\zeta_j) = q(\zeta_j)/\sum_{t=1}^{E} q(\zeta_t) $ \\
+\item normalization in each round: $ q(\zeta_j) = q(\zeta_j)/\sum_{t=1}^{E} q(\zeta_t) $ \\
+\end{enumerate}
+
 
 \subsection{M step}
 For gating nodes: \\
@@ -165,36 +181,76 @@ Feature selection in expert nodes: \\
 \item $ \sigma_j^{2(t)} = \arg\min_{\sigma_j} Q(w_j^{(t)}, \sigma_j^2) $ \\
 \item $ Q(w_j, \sigma_j^2) = -\sum_{n=1}^{N} q^{(t)} (\zeta_j^{(n)}) 
 	\log p(y^{(n)} | x^{(n)}, w_j, \sigma_j^2 ) $ \\
-\item $ w_j = -\theta^{-1}_{yy_j}\theta^T_{xy_j} $ \\
-\item $ \sigma^2_j = \theta^{-1}_{yy_j} $ \\
+\item $ w_j = -\Theta^{-1}_{yy_j}\Theta^T_{xy_j} $ \\
+\item $ \sigma^2_j = \Theta^{-1}_{yy_j} $ \\
+\item $ \displaystyle \frac{\partial Q (X,Y,\Theta_{xy},\Theta_{yy})}
+	{\partial \Theta_{xy}} =	-X^T Y + \sum_i E[x_i y_i^T] $ \\
+\item $ \displaystyle \frac{\partial Q (X,Y,\Theta_{xy},\Theta_{yy})}
+	{\partial \Theta_{yy}} =-1/2Y^T Y + \sum_i E[y_i y_i^T] $ 
 \end{description}
-
-Forward: \\
-select a feature from unselected feature set by maximize: 
-$ \lvert \nabla_w Q(w^{(k)}, \sigma^2)_j \rvert $ \\
 
 \begin{align*}
 \nabla_w Q(w^{(k)}, \sigma^2)_i & = \frac{\partial Q_j}{
 	\partial (-\Theta^{-1}_{yy_j}\Theta^T_{xy_j}) } \\
 	& = \frac{d Q_j}{
-		-\Theta^{-1}_{yy_j}d(\Theta^T_{xy_j}) + d(-\Theta^{-1}_{yy_j}) \Theta^T_{xy_j} } \\
-	& = \frac{1}{ \frac{-\Theta^{-1}_{yy_j}}{ \frac{\partial Q}{\partial(\Theta^T_{xy_j}) }}
-		+\frac{\Theta^T_{xy_j}}{ \frac{\partial Q}{\partial(-\Theta^{-1}_{yy_j})}} } \\
-	& = \left({ - ({\frac{\partial Q} {\Theta_{yy_j}} {\partial\Theta_{xy_j}}^T})^{-1}
-		+ {\Theta^T_{yy_j}} {\frac{\partial Q}{\partial(\Theta_{yy_j})}
-			\Theta_{yy_j}\Theta_{xy_j}^T} }\right)^{-1} \\
+		-\Theta^{-1}_{yy_j}d(\Theta^T_{xy_j})
+		 + d(-\Theta^{-1}_{yy_j}) \Theta^T_{xy_j} } \\
+	& = \frac{1}{ \frac{-\Theta^{-1}_{yy_j}}{ \frac{\partial Q}
+	{\partial(\Theta^T_{xy_j}) }}
+		+\frac{\Theta^T_{xy_j}}{ \frac{\partial Q}
+		{\partial(-\Theta^{-1}_{yy_j})}} } \\
+	& = {\left( - {\left( {(\frac{\partial Q} {\partial\Theta_{xy_j}})}^T
+	 \Theta_{yy_j}\right)}^{-1}
+		+ {\Theta^T_{yy_j}} {\frac{\partial Q}{\partial\Theta_{yy_j}}
+			\Theta_{yy_j}\Theta_{xy_j}^T} \right)}^{-1} \\
 \end{align*} 
 
-$ \displaystyle \frac{\partial Q (X,Y,\Theta_{xy},\Theta_{yy})}{\partial \Theta_{xy}} =
-	-X^T Y + \sum_i E[x_i y_i^T] $ \\
-$ \displaystyle \frac{\partial Q (X,Y,\Theta_{xy},\Theta_{yy})}{\partial \Theta_{yy}} =
--1/2Y^T Y + \sum_i E[y_i y_i^T] $ \\
+\begin{itemize}
+\item Solution 1 (Within FoBa framework):
+	\begin{enumerate}
+	\item while not:
+		$ \Delta Q(w^{(k)},\sigma^2) \le 0.5\log N_{\phi_j}^{(t)} $ 
+	\item Forward:
+	\item \qquad Optimize $\phi$: \begin{enumerate}
+		\setlength{\itemindent}{4em}
+		\item $ \hat{w} = (X^T X)^{-1} X^T Y $
+		\item $ \hat{\Theta}_{yy_j} = {\sigma^2_j}^{-1} 
+			= {(Y - X \hat{w})}^{-1} $
+		\item $ \hat{\Theta}_{xy_j} = 
+			- {( \hat{\Theta}_{yy_j} \hat{w} )}^{-1} $
+		\end{enumerate}
+	\item \qquad Select a feature from unselected feature set 
+		\begin{description}
+		\setlength{\itemindent}{2em}
+		\item{Solution 1.1:} 
+			by estimate $\hat{Q}$, then calculate $(\hat{Q}-Q)^T X(v)$ 
+			as in current FoBa
+		\item{Solution 1.2:} 
+			by maximize: 
+			$ \lvert \nabla_w Q(w^{(k)}, \sigma^2)_j \rvert $ 
+			using $\nabla_w Q(w^{(k)}, \sigma^2)$
+		\end{description}	 
 
-until: \\
-$ \Delta Q(w^{(k)},\sigma^2) \le 0.5\log N_{\phi_j}^{(t)} $ \\
+	\item Backward: 
+	\item \qquad while $ \exists$ feature $i, \Delta Q(w^{(k)}, \sigma^2)_i 
+		\le 0.5\log N_{\phi_j}^{(t)} $ ,
+		remove the feature.
 
-Backward: \\
-while $ \exists i, \Delta Q(w^{(k)}, \sigma^2)_i \le 0.5\log N_{\phi_j}^{(t)} $ \\
-remove the feature.
+	\end{enumerate}
+\item Solution 2 (Replacing FoBa with gradient descent):
+	\begin{enumerate}
+	\item Initiate $\phi$ by random sampling
+	\item while not:
+		$ \Delta Q(w^{(k)},\sigma^2) \le 0.5\log N_{\phi_j}^{(t)} $ 
+	\item Optimize $argmin \{ Q(X,Y,\phi)
+		+\lambda_1 \lVert \Theta_{xy} \rVert
+		+\lambda_2 \lVert \Theta_{yy} \rVert \} $ by
+	\item \qquad Find direction using quasi-Newton method with 
+		$\partial Q /\partial\Theta_{yy_j}$ and
+		 $\partial Q /\partial\Theta_{xy_j}$
+	\item \qquad Line search 
+	\item Using cross validation to set $\lambda_1$ and $\lambda_2$
+	\end{enumerate}
+\end{itemize}
 
 \end{document} 
