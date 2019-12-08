@@ -1,0 +1,106 @@
+\documentclass{article}
+\usepackage{fontspec, xunicode, xltxtra}  
+\setmainfont{Hiragino Sans GB}  
+\title{Vehicles Action Reward Learning}
+\author{Roi}
+\begin{document}
+\maketitle{}
+
+\section{Problem Specified}
+Problem is defined in accordance with variables in ref.\cite{r1}
+\begin{itemize}
+    \item $\{q_1,...,q_n\}$ are locations, $q_0$ indicates original
+    \item $\{v_1,...,v_m\}$ are vehicles
+    \item $\tau\left(q_1, q_2, t\right)$ is minimum travel time from $q_1$ to $q_2$ at start time $t$
+\end{itemize}
+
+\noindent
+In addition we define:
+\begin{itemize}
+    \item $\{H_1,...,H_m\}$ are hexagonals used in order dispatch
+    \item $\{\mathcal{H}_1,...,\mathcal{H}_m\}$ are locations $q (>=0)$ in certain hexagonals above, picked by
+    \begin{itemize}
+        \item Top pick-up points $\{\mathcal{P}u_1,...,\mathcal{P}u_m\}$
+        \item Top passed intersections $\{\mathcal{I}r_1,...,\mathcal{I}r_m\}$
+    \end{itemize}
+    \item $\sigma(q_1,q_2,v,t)$ is order generated for $v (>=1)$ seats from $q_1$ to $q_2$ at time $t$
+    \item $\mathcal{RP}\left(q_1, q_2, t\right)$ is Route Plan for $q_1$ to $q_2$ at time $t$
+            (Here $\mathcal{RP}()$ is used to reduce $output dimension$ to $enumerated q_2$)
+    \item $\mathcal{W}$ is action of waiting still for a certain period
+    \item $\{\mathcal{M}(q_1),...,\mathcal{M}(q_m)\}$ are actions of moving towards $q_i$
+    \begin{itemize}
+        \item $\mathcal{M}(q_i)=\mathcal{W}$ if $q_i\equiv q_0$
+    \end{itemize}
+    \item $\mathbf{P} = \{p_1,...,p_m\}$, in which, 
+        $p_i = p(\mathcal{RP}(q_j, q_i, t_k),\sigma(q_m,q_n,v,t_z))$ 
+        defines the probability of order $\sigma(q_m,q_n,v,t_z)$ 
+        be dispathed to a vehicle $(capacity>v)$ 
+        following the route planned by $\mathcal{RP}(q_j, q_i, t_k)$
+    \item $P_{\sigma}$ is vehicle income for dispatch $\sigma$
+    \item $t_{\sigma}$ is travel time of dispatch $\sigma$
+    \item $t_{\mathcal{RP}}$ is travel time of vehicle following $\mathcal{RP}$ (roaming time + pick_up time)
+    \item $d_{\mathcal{RP}}$ is distance of $\mathcal{RP}$
+    \item $F(q_i,t)$ is demand-over-supply in the hexagonal of $q_i$ at time $t$
+\end{itemize}
+
+\noindent
+Actions are:
+\begin{equation}
+    \label{action}
+    \{\mathcal{M}(\mathcal{H}_0),...,\mathcal{M}(\mathcal{H}_m)\}
+\end{equation}
+
+\noindent
+The reward corresponding to an action $\mathcal{M}_i$ is defined as:
+\begin{equation}
+    \label{reward}
+    \mathcal{R}(\mathcal{M}_i) = {‎‎\sum}_{p_i\in \mathbf{P}}p_i*
+        (\mathcal{V}(\sigma_i)-\mathcal{C}(\sigma_i))
+\end{equation}
+in which, reward of $\sigma_i$
+\begin{equation}
+    \mathcal{V}(\sigma(q_m,q_n,v,t_z)) = \alpha\frac{P_{\sigma}}{t_{\sigma}} + 
+        \beta F(q_n,t_z+\tau(q_m,q_n,t_z))
+\end{equation}
+cost of $\sigma_i$
+\begin{equation}
+    \mathcal{C}(\sigma(q_m,q_n,v,t_z)) = \gamma_1 t_{\mathcal{RP}(q_0,q_m,t)} +
+        \gamma_2 d_{\mathcal{RP}(q_0,q_m,t)}
+\end{equation}
+
+\section{Data Engineering}
+Data required
+\begin{itemize}
+    \item Finished orders with $q_m,q_n,v,t_z$
+    \item Dispatching status with $order$ and $driver$ in each $hexagonal$
+\end{itemize}
+
+\noindent
+Procedure
+\begin{itemize}
+    \item Prepare finished order DATA in form of 
+    \item Calculate rewards for each finished order
+    \item Join finished orders by vehicle
+    \item Flatmap all sections between 'finishing point of continuous two finished orders'
+    \item Prepare input feature vector at each 'finishing point' and each '$\mathcal{H}$' point inbetween continuous two finished orders
+    \item Calculate 'Cost between finishing point and starting point of next order', join with trip reward, as output
+    \item Farward network and set relative 'action reward' with previously calculated
+    \item Backward network with loss
+\end{itemize}
+
+
+\section{Additional Problem}
+Cannot avoid local RP and ETA calculation\\
+Some places are forbidden to be stayed at\\
+Multipul drivers at the same place should not act in the same way (systematic influence)?\\
+
+
+\begin{thebibliography}{1}
+
+  \bibitem{r1} J Alonso-Mora et al. On-demand high-capacity ride-sharing via dynamic trip-vehicle assignment. PNAS, 2017.
+
+\end{thebibliography}
+
+\end{document}
+
+

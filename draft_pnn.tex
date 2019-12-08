@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage{fontspec, xunicode, xltxtra}  
+\setmainfont{Hiragino Sans GB}  
+\title{Vehicles Action Policy Learning}
+\author{Roi}
+\begin{document}
+\maketitle{}
+
+\section{Introduction}
+In this draft, a policy network, learnt from selected history of continous dispatches, is proposed.
+
+
+\section{Problem Specified}
+Problem is defined in accordance with variables in ref.\cite{r1}, and policy network defined in accordance with model in ref.\cite{r2}
+\begin{itemize}
+    \item $\{q_1,...,q_n\}$ are locations, $q_0$ indicates original
+\end{itemize}
+
+\noindent
+In addition we define:
+\begin{itemize}
+    \item $\{H_1,...,H_m\}$ are hexagonals used in order dispatch
+    \item $\{\mathcal{H}_1,...,\mathcal{H}_m\}$ are locations $q (>=0)$ in certain hexagonals above, picked by
+    \begin{itemize}
+        \item Top pick-up points $\{\mathcal{P}u_1,...,\mathcal{P}u_m\}$
+        \item Top passed intersections $\{\mathcal{I}r_1,...,\mathcal{I}r_m\}$
+    \end{itemize}
+    \item $\sigma(q_1,q_2,t)$ is order from $q_1$ to $q_2$ at time $t$
+    \item $\mathcal{RP}\left(q_1, q_2, t\right)$ is Route Plan for $q_1$ to $q_2$ at time $t$ 
+            (Here $\mathcal{RP}()$ is used to reduce output dimension to enumerated $q_2$, 
+            it could be a local service)
+    \item $\{\mathcal{M}(q_1),...,\mathcal{M}(q_m)\}$ are actions of moving towards $q_i$
+    \begin{itemize}
+        \item $\mathcal{M}(q_i)$ is action of waiting still for a certain period if $q_i\equiv q_0$
+    \end{itemize}
+    \item $P_{\sigma}$ is vehicle income for order $\sigma$
+    \item $d_{\mathcal{RP}}$ is distance of $\mathcal{RP}$
+    \item $F(q_i,t)$ is (demand,supply,boolin) in the hexagonal of $q_i$ at time $t$ 
+            (boolin is bool mark whether current vehicle in this hexagonal)
+    \item $\mathcal{T}(t)$ is time features including weekday(enum), holiday(bool)
+\end{itemize}
+
+
+\noindent
+The SL policy network $p_{\sigma}(a|s)$ can be optimized by sgd to maximize the likelihood of driver actions in selected dispatch series:
+\begin{equation}
+    \label{reward}
+    \Delta \sigma \propto \frac{\partial \log p_\sigma (a|s)}{\partial \sigma}
+\end{equation}
+in which, $a=\mathcal{M}$, $s=\{F(q_0,t),...,F(q_m,t),\mathcal{T}(t),\}$
+
+\section{Data Engineering}
+Data required
+\begin{itemize}
+    \item Finished orders with $q_m,q_n,t_z$
+    \item Dispatching status with $popups$ and $vehicles$ in each $hexagonal$
+\end{itemize}
+
+\noindent
+Procedure
+\begin{itemize}
+    \item Prepare finished order DATA, state/environment DATA, driverloc history DATA
+    \item Select drivers with Top hourly income, filter out their traces and corresponding orders
+    \item Generate $\mathcal{H}$ mappings
+    \item Align descion points with $s$ in selected traces
+    \item Mapping the selected drivers traces to $\mathcal{M}$ for $a$
+    \item $Learning$ Update policy network using $a|s$ pairs
+    \item Generate $a|s$ pairs for all drivers in new data
+    \item $Evaluation$ Filter drivers with daily actual $a|s$ pairs matching policy network generated series, check fitlered drivers' expected income
+\end{itemize}
+
+
+\section{Investigation}
+\begin{enumerate}
+    \item A+，优选，IPH
+\end{enumerate}
+
+
+\section{Additional Problem}
+Cannot avoid local RP and ETA calculation\\
+Some places are forbidden to be stayed at\\
+Multipul drivers at the same place should not act in the same way (systematic influence)?\\
+
+
+\begin{thebibliography}{1}
+
+  \bibitem{r1} J Alonso-Mora et al. On-demand high-capacity ride-sharing via dynamic trip-vehicle assignment. PNAS, 2017.
+  \bibitem{r2} D Silver et al. Mastering the game of Go with Deep Neural Networks \& Tree Search. Vol 529 Nature, 2016.
+
+\end{thebibliography}
+
+\end{document}
+
+
